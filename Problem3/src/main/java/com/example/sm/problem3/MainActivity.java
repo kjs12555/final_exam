@@ -6,6 +6,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Random;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -28,9 +29,11 @@ public class MainActivity extends AppCompatActivity {
 
 
         for(CustomerThread ct : list){
-
             try {
                 // need something here
+                if(ct.isAlive()){
+                    Thread.sleep(100);
+                }
             } catch (InterruptedException e) { }
         }
 
@@ -52,6 +55,15 @@ class CustomerThread extends Thread{
         this.customer = customer;
     }
     // need something here
+
+
+    @Override
+    public void run() {
+        super.run();
+        for(int i=0; i<10; i++){
+            this.customer.work();
+        }
+    }
 }
 
 abstract class Person{
@@ -70,6 +82,18 @@ class Customer extends Person{
         this.name = name;
     }
 
+    @Override
+    void work() {
+        double spendDouble = Math.random()*1000;
+        int spend;
+        if(spendDouble%1 >= 0.5){
+            spendDouble+=1;
+        }
+        spend = (int)spendDouble;
+        this.spent_money+=spend;
+        money-=spend;
+    }
+
     // need something here
 }
 
@@ -81,10 +105,21 @@ class Manager extends Person{
         list.add(customer);
     }
 
-    void sort(){ // 직접 소팅 알고리즘을 이용하여 코딩해야함. 자바 기본 정렬 메소드 이용시 감
+    void sort(){ // 직접 소팅 알고리즘을 이용하여 코딩해야함. 자바 기본 정렬 메소드 이용시 감점
 
         // need something here
 
+        for(int i=0; i<list.size(); i++){
+            for(int j=i+1; j<list.size(); j++){
+                Customer tmp1 =list.get(i);
+                Customer tmp2 =list.get(j);
+                if(tmp1.spent_money<tmp2.spent_money){
+                    Customer tmp3 = tmp1;
+                    list.set(i, tmp2);
+                    list.set(j, tmp3);
+                }
+            }
+        }
     }
 
     @Override
